@@ -8,13 +8,14 @@ namespace calc
 {
     double calculate(const std::string &expr);
 
-    struct Token
+    class Token
     {
         std::string value;
         uint8_t type;
         uint8_t possible_left_value;
 
-        Token(const std::string &value);
+    public:
+        Token(const std::string &value, const uint8_t type, const uint8_t possible_left_value);
     };
 
     typedef std::deque<Token> tokens;

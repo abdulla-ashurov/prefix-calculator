@@ -4,6 +4,8 @@
 #include <string>
 #include <deque>
 
+#include "../include/detail.hpp"
+
 namespace calc
 {
     double calculate(const std::string &expr);
@@ -11,11 +13,15 @@ namespace calc
     class Token
     {
         std::string value;
-        uint8_t type;
-        uint8_t possible_left_value;
+        detail::Types type;
+        detail::PossibleLeftValues possible_left_value;
+
+        detail::Types define_type(const std::string &value);
+        detail::PossibleLeftValues define_possible_left_value(const detail::Types type);
 
     public:
-        Token(const std::string &value, const uint8_t type, const uint8_t possible_left_value);
+        Token(const std::string &value);
+        Token(const char value);
     };
 
     typedef std::deque<Token> tokens;

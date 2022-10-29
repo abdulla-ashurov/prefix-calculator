@@ -11,8 +11,15 @@ namespace calc
         return calculate_impl(prefix);
     }
 
-    Token::Token(const std::string &value, const uint8_t type, const uint8_t possible_left_value)
-        : value{value}, type{type}, possible_left_value{possible_left_value} {}
+    Token::Token(const std::string &value)
+        : value{value}
+    {
+        type = define_type(value);
+        possible_left_value = define_possible_left_value(type);
+    }
+
+    Token::Token(const char value)
+        : Token(std::string(1, value)) {}
 
     tokens parse(const std::string &expr)
     {
@@ -28,19 +35,10 @@ namespace calc
             {
                 if (!operand.empty())
                 {
-                    infix.push_back(Token(
-                        operand, 
-                        detail::define_type(operand), 
-                        detail::define_possible_left_value(operand)
-                    ));
+                    infix.push_back(Token(operand));
                     operand.clear();
                 }
-
-                infix.push_back(Token(
-                    std::string(1, expr[i]), 
-                    detail::define_type(operand), 
-                    detail::define_possible_left_value(operand)
-                ));
+                infix.push_back(Token(expr[i]));
             }
         }
 

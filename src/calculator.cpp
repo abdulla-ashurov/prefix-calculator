@@ -44,4 +44,70 @@ namespace calc
 
     Token::Token(const char value)
         : Token(std::string(1, value)) {}
+    
+    detail::Types Token::define_type(const std::string &value)
+    {
+        detail::Types defined_type;
+
+        if (detail::is_operand(value))
+            defined_type = detail::Types::OPERAND;
+        else if (detail::is_addition(value))
+            defined_type = detail::Types::ADDITION;
+        else if (detail::is_subtraction(value))
+            defined_type = detail::Types::SUBTRACTION;
+        else if (detail::is_multiplication(value))
+            defined_type = detail::Types::MULTIPLICATION;
+        else if (detail::is_division(value))
+            defined_type = detail::Types::DIVISION;
+        else if (detail::is_open_bracket(value))
+            defined_type = detail::Types::OPEN_BRACKET;
+        else if (detail::is_close_bracket(value))
+            defined_type = detail::Types::CLOSE_BRACKET;
+        else
+            defined_type = detail::Types::INCORRECT;
+
+        return defined_type;
+    }
+
+    detail::PossibleLeftValues Token::define_possible_left_value(const detail::Types type)
+    {
+        detail::PossibleLeftValues possible_left_value;
+
+        switch (type)
+        {
+        case detail::Types::OPERAND:
+            possible_left_value = detail::PossibleLeftValues::OPERAND;
+            break;
+
+        case detail::Types::ADDITION:
+            possible_left_value = detail::PossibleLeftValues::ADDITION;
+            break;
+
+        case detail::Types::SUBTRACTION:
+            possible_left_value = detail::PossibleLeftValues::SUBTRACTION;
+            break;
+
+        case detail::Types::MULTIPLICATION:
+            possible_left_value = detail::PossibleLeftValues::MULTIPLICATION;
+            break;
+
+        case detail::Types::DIVISION:
+            possible_left_value = detail::PossibleLeftValues::DIVISION;
+            break;
+
+        case detail::Types::OPEN_BRACKET:
+            possible_left_value = detail::PossibleLeftValues::OPEN_BRACKET;
+            break;
+
+        case detail::Types::CLOSE_BRACKET:
+            possible_left_value = detail::PossibleLeftValues::CLOSE_BRACKET;
+            break;
+
+        case detail::Types::INCORRECT:
+            possible_left_value = detail::PossibleLeftValues::INCORRECT;
+            break;
+        }
+
+        return possible_left_value;
+    }
 }

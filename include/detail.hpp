@@ -53,8 +53,8 @@ namespace detail
     bool is_operand(const std::string &value);
     bool is_addition(const std::string &value);
     bool is_subtraction(const std::string &value);
-    bool is_multiplication(const std::string);
-    bool is_division(const std::string);
+    bool is_multiplication(const std::string &value);
+    bool is_division(const std::string &value);
     bool is_open_bracket(const std::string &value);
     bool is_close_bracket(const std::string &value);
 }

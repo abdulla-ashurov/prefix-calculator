@@ -56,7 +56,7 @@ namespace calc
         tokens prefix;
         std::stack<Token> st;
 
-        for (int i = infix.size(); i >= 0; i--)
+        for (int i = infix.size() - 1; i >= 0; i--)
         {
             detail::Types type = infix[i].get_type();
 

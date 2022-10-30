@@ -8,24 +8,24 @@ namespace detail
     enum class Types
     {
         OPERAND = 0b00000001,
-        ADDITION = 0b00000010,
-        SUBTRACTION = 0b00000100,
-        MULTIPLICATION = 0b00001000,
-        DIVISION = 0b00010000,
-        OPEN_BRACKET = 0b00100000,
-        CLOSE_BRACKET = 0b01000000,
+        OPEN_BRACKET = 0b00000010,
+        CLOSE_BRACKET = 0b00000100,
+        ADDITION = 0b00001000,
+        SUBTRACTION = 0b00010000,
+        MULTIPLICATION = 0b00100000,
+        DIVISION = 0b01000000,
         INCORRECT = 0b10000000
     };
 
     enum class PossibleLeftValues
     {
-        OPERAND = 0b01111110,
+        OPERAND = 0b01111010,
         ADDITION = 0b01111111,
         SUBTRACTION = 0b01111111,
         MULTIPLICATION = 0b00000001,
         DIVISION = 0b00000001,
-        OPEN_BRACKET = 0b00111110,
-        CLOSE_BRACKET = 0b01011110,
+        OPEN_BRACKET = 0b11111010,
+        CLOSE_BRACKET = 0b01111100,
         INCORRECT = 0b10000000
     };
 

@@ -5,7 +5,7 @@
 
 namespace detail
 {
-    enum Types
+    enum class Types
     {
         OPERAND = 0b00000001,
         ADDITION = 0b00000010,
@@ -17,35 +17,16 @@ namespace detail
         INCORRECT = 0b10000000
     };
 
-    enum PossibleLeftValues
+    enum class PossibleLeftValues
     {
-        OPERAND = Types::ADDITION | Types::SUBTRACTION |
-                  Types::MULTIPLICATION | Types::DIVISION |
-                  Types::OPEN_BRACKET | Types::CLOSE_BRACKET,
-
-        ADDITION = Types::OPERAND | Types::ADDITION |
-                   Types::SUBTRACTION | Types::MULTIPLICATION |
-                   Types::DIVISION | Types::OPEN_BRACKET |
-                   Types::CLOSE_BRACKET,
-
-        SUBTRACTION = Types::OPERAND | Types::ADDITION |
-                      Types::SUBTRACTION | Types::MULTIPLICATION |
-                      Types::DIVISION | Types::OPEN_BRACKET |
-                      Types::CLOSE_BRACKET,
-
-        MULTIPLICATION = Types::OPERAND,
-
-        DIVISION = Types::OPERAND,
-
-        OPEN_BRACKET = Types::ADDITION | Types::SUBTRACTION |
-                       Types::MULTIPLICATION | Types::DIVISION |
-                       Types::OPEN_BRACKET,
-
-        CLOSE_BRACKET = Types::ADDITION | Types::SUBTRACTION |
-                        Types::MULTIPLICATION | Types::DIVISION |
-                        Types::CLOSE_BRACKET,
-
-        INCORRECT = Types::INCORRECT
+        OPERAND = 0b01111110,
+        ADDITION = 0b01111111,
+        SUBTRACTION = 0b01111111,
+        MULTIPLICATION = 0b00000001,
+        DIVISION = 0b00000001,
+        OPEN_BRACKET = 0b00111110,
+        CLOSE_BRACKET = 0b01011110,
+        INCORRECT = 0b10000000
     };
 
     bool is_number(const char s);

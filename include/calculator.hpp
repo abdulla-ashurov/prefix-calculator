@@ -22,6 +22,10 @@ namespace calc
     public:
         Token(const std::string &value);
         Token(const char value);
+
+        const std::string& get_value() const;
+        detail::Types get_type() const;
+        detail::PossibleLeftValues get_possible_left_value() const;
     };
 
     typedef std::deque<Token> tokens;

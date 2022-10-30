@@ -32,6 +32,12 @@ namespace calc
             }
         }
 
+        if (!operand.empty())
+        {
+            infix.push_back(Token(operand));
+            operand.clear();
+        }
+
         return infix;
     }
 
@@ -45,6 +51,22 @@ namespace calc
     Token::Token(const char value)
         : Token(std::string(1, value)) {}
     
+    const std::string& Token::get_value() const
+    {
+        return value;
+    }
+
+    detail::Types Token::get_type() const
+    {
+        return type;
+    }
+
+    detail::PossibleLeftValues Token::get_possible_left_value() const
+    {
+        return possible_left_value;
+    }
+    
+
     detail::Types Token::define_type(const std::string &value)
     {
         detail::Types defined_type;

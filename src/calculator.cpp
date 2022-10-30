@@ -1,3 +1,6 @@
+#include <stack>
+#include <algorithm>
+
 #include "../include/calculator.hpp"
 #include "../include/detail.hpp"
 
@@ -39,6 +42,72 @@ namespace calc
         }
 
         return infix;
+    }
+
+    tokens to_prefix(const tokens &infix)
+    {
+        tokens prefix = to_prefix_impl(infix);
+          
+        return prefix;
+    }
+
+    tokens to_prefix_impl(const tokens &infix)
+    {
+        tokens prefix;
+        std::stack<Token> st;
+
+        for (int i = infix.size(); i >= 0; i--)
+        {
+            detail::Types type = infix[i].get_type();
+
+            switch (type)
+            {
+            case detail::Types::OPERAND:
+                prefix.push_back(infix[i]);
+                break;
+            
+            case detail::Types::CLOSE_BRACKET:
+                st.push(infix[i]);
+                break;
+            
+            case detail::Types::OPEN_BRACKET:
+                while (st.top().get_type() != detail::Types::CLOSE_BRACKET)
+                {
+                    prefix.push_back(st.top());
+                    st.pop();
+                }
+                st.pop();
+
+                break;
+            
+            case detail::Types::ADDITION:
+            case detail::Types::SUBTRACTION:
+            case detail::Types::MULTIPLICATION:
+            case detail::Types::DIVISION:
+                while (!st.empty() && infix[i].get_type() <= st.top().get_type())
+                {
+                    prefix.push_back(st.top());
+                    st.pop();
+                }
+                st.push(infix[i]);
+
+                break;
+
+            case detail::Types::INCORRECT:
+                throw std::invalid_argument("invalid argument");
+                break;
+            }
+        }
+
+        while (!st.empty())
+        {
+            prefix.push_back(st.top());
+            st.pop();
+        }
+
+        std::reverse(prefix.begin(), prefix.end());
+
+        return prefix;
     }
 
     Token::Token(const std::string &value)

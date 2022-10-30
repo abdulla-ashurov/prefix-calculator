@@ -33,6 +33,8 @@ namespace calc
     tokens parse(const std::string &expr);
     tokens to_prefix(const tokens &infix);
     double calculate_impl(const tokens &prefix);
+
+    tokens to_prefix_impl(const tokens &infix);
 }
 
 #endif

@@ -6,7 +6,7 @@ This calculator uses the prefix way of calculating mathematical expressions.
 
 - `operand`: - integer numbers
 - `operators`: addition, subtraction , multiplication, division, unary minus, unary plus
-- `brackets`: open and close bracket `()`
+- `brackets`: open and close brackets `()`
 
 ## To run unit tests
 

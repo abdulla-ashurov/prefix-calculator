@@ -110,6 +110,63 @@ namespace calc
         return prefix;
     }
 
+    double calculate_impl(const tokens &prefix)
+    {
+        std::stack<double> st;
+
+        for (int i = prefix.size() - 1; i >= 0; i--)
+        {
+            if (prefix[i].get_type() == detail::Types::OPERAND)
+                st.push(std::stoi(prefix[i].get_value()));
+            
+            else if (prefix[i].get_type() == detail::Types::ADDITION ||
+                prefix[i].get_type() == detail::Types::SUBTRACTION ||
+                prefix[i].get_type() == detail::Types::MULTIPLICATION ||
+                prefix[i].get_type() == detail::Types::DIVISION)
+            {
+                if (st.empty())
+                    throw std::invalid_argument("invalid argument!");
+                
+                double first_operand = st.top();
+                st.pop();
+
+                if (st.empty())
+                {
+                    if (prefix[i].get_type() == detail::Types::ADDITION)
+                        st.push(first_operand);
+                    else if (prefix[i].get_type() == detail::Types::SUBTRACTION)
+                        st.push(-first_operand);
+                    else
+                        throw std::invalid_argument("invalid argument!");
+                }
+                else
+                {
+                    double second_operand = st.top();
+                    st.pop();
+
+                    if (prefix[i].get_type() == detail::Types::ADDITION)
+                        st.push(first_operand + second_operand);
+                    else if (prefix[i].get_type() == detail::Types::SUBTRACTION)
+                        st.push(first_operand - second_operand);
+                    else if (prefix[i].get_type() == detail::Types::MULTIPLICATION)
+                        st.push(first_operand * second_operand);
+                    else if (prefix[i].get_type() == detail::Types::DIVISION)
+                    {
+                        if (second_operand == 0.0)
+                            throw std::invalid_argument("we cannot division to zero");
+                    
+                        st.push(first_operand / second_operand);
+                    }
+                }
+                
+            }
+            else
+                throw std::invalid_argument("invalid argument!");
+        }
+
+        return st.top();
+    }
+
     Token::Token(const std::string &value)
         : value{value}
     {

@@ -115,3 +115,59 @@ TEST_CASE("test function calc::to_prefix(const tokens &infix)")
         }
     }
 }
+
+TEST_CASE("test function calc::calculate_impl")
+{
+    SECTION("function should return expected_results")
+    {
+        std::deque<calc::tokens> prefix =
+        {
+            {calc::Token("1")},
+            {calc::Token("23")},
+            {calc::Token("345")},
+            {calc::Token("9012")},
+            {calc::Token("+"), calc::Token("1"), calc::Token("+"), calc::Token("2"), calc::Token("3")},
+            {calc::Token("-"), calc::Token("1"), calc::Token("-"), calc::Token("2"), calc::Token("3")},
+            {calc::Token("*"), calc::Token("1"), calc::Token("*"), calc::Token("2"), calc::Token("3")},
+            {calc::Token("/"), calc::Token("1"), calc::Token("/"), calc::Token("2"), calc::Token("3")},
+            {calc::Token("+"), calc::Token("1"), calc::Token("12")},
+            {calc::Token("-"), calc::Token("12"), calc::Token("123")},
+            {calc::Token("-"), calc::Token("*"), calc::Token("123"), calc::Token("1234")},
+            {calc::Token("+"), calc::Token("-"), calc::Token("/"), calc::Token("12340"), calc::Token("1234")},
+            {calc::Token("-"), calc::Token("1")},
+            {calc::Token("-"), calc::Token("23")},
+            {calc::Token("-"), calc::Token("345")},
+            {calc::Token("1234567890")}
+        };
+
+        std::deque<double> expected_results = {1.0, 23.0, 345.0, 9012.0, 6.0, 2.0, 6.0, 1.5, 13.0, -111.0, -151782.0, 
+        -10.0, -1.0, -23.0, -345.0, 1234567890};
+
+        for (size_t i = 0; i < prefix.size(); i++) 
+        {
+            double result = calc::calculate_impl(prefix[i]);
+            REQUIRE(result == expected_results[i]);
+        }
+    }
+
+    SECTION("function should return std::invalid_argument")
+    {
+        std::deque<calc::tokens> prefix =
+        {
+            {calc::Token("+")},
+            {calc::Token("-")},
+            {calc::Token("*")},
+            {calc::Token("/")},
+            {calc::Token("*9012")},
+            {calc::Token("-+/9012/*")},
+            {calc::Token("abcdefghij")},
+            {calc::Token("a"), calc::Token("b"), calc::Token("c"), calc::Token("d"),
+                calc::Token("e"), calc::Token("f"), calc::Token("g"), calc::Token("h"),
+                calc::Token("i"), calc::Token("j")},
+            {calc::Token("*"), calc::Token("-"), calc::Token("9"), calc::Token("012")}
+        };
+
+        for (size_t i = 0; i < prefix.size(); i++)
+            REQUIRE_THROWS(calc::calculate_impl(prefix[i]));
+    }
+}

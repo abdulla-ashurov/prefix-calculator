@@ -147,4 +147,74 @@ TEST_CASE("test function calc::calculate_impl")
             REQUIRE(result == expected_results[i]);
         }
     }
+
+    SECTION("function should return std::invalid_argument")
+    {
+        std::deque<calc::tokens> prefix =
+        {
+            {calc::Token("+")},
+            {calc::Token("-")},
+            {calc::Token("*")},
+            {calc::Token("/")},
+            {calc::Token("*9012")},
+            {calc::Token("-+/9012/*")},
+            {calc::Token("abcdefghij")},
+            {calc::Token("a"), calc::Token("b"), calc::Token("c"), calc::Token("d"),
+                calc::Token("e"), calc::Token("f"), calc::Token("g"), calc::Token("h"),
+                calc::Token("i"), calc::Token("j")},
+            {calc::Token("*"), calc::Token("-"), calc::Token("9"), calc::Token("012")}
+        };
+
+        for (size_t i = 0; i < prefix.size(); i++)
+            REQUIRE_THROWS(calc::calculate_impl(prefix[i]));
+    }
+}
+
+TEST_CASE("test function calc::calculate")
+{
+    SECTION("function should return expected_results")
+    {
+        std::deque<std::string> expressions = {
+            "1", "12", "123", "1234",
+            "-1", "-12", "--123", "---1234",
+            "(-1)", "(-22)", "-(3)", "--(44)",
+            "1+2", "22+33", "4+456", "77+8787",
+            "-1-2", "-22-334", "-22-33", "31--22",
+            "+1+2", "31++22", "-12*65", "-19*-23",
+            "-12/3", "-25/-50", "--25/--50", "--25/-50",
+            "-(1)", "(-11)", "(-1-22)*6-53", "(-1-22)/23-43",
+            "(555-222)/(1+2)*(22-23)", "(555-222)/(1+2)*-(22-23)",
+            "2+2*3", "2-2*3", "(2-2)*3", "-(2+2)*3"
+        };
+
+        std::deque<double> expected_results = {
+            1, 12, 123, 1234,
+            -1, -12, 123, -1234,
+            -1, -22, -3, 44,
+            3, 55, 460, 8864,
+            -3, -356, -55, 53,
+            3, 53, -780, 437,
+            -4, 0.5, 0.5, -0.5,
+            -1, -11, -191, -44,
+            -111,111,
+            8, -4, 0, -12
+        };
+
+        for (size_t i = 0; i < expressions.size(); i++)
+        {
+            double result = calc::calculate(expressions[i]);
+            REQUIRE(result == expected_results[i]);
+        }
+    }
+
+    SECTION("function should return expected_results")
+    {
+        std::deque<std::string> expressions = {
+            "a", "ab", "abc", "abcdefghij",
+            "-*1", "-*12", "--/123", "-/--1234"
+        };
+
+        for (size_t i = 0; i < expressions.size(); i++)
+            REQUIRE_THROWS(calc::calculate(expressions[i]));
+    }
 }

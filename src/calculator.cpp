@@ -85,8 +85,6 @@ namespace calc
             switch (type)
             {
             case detail::Types::OPERAND:
-            case detail::Types::UNARY_PLUS:
-            case detail::Types::UNARY_MINUS:
                 prefix.push_back(infix[i]);
                 break;
             
@@ -104,6 +102,8 @@ namespace calc
 
                 break;
             
+            case detail::Types::UNARY_PLUS:
+            case detail::Types::UNARY_MINUS:
             case detail::Types::ADDITION:
             case detail::Types::SUBTRACTION:
             case detail::Types::MULTIPLICATION:
@@ -146,7 +146,9 @@ namespace calc
             else if (prefix[i].get_type() == detail::Types::ADDITION ||
                 prefix[i].get_type() == detail::Types::SUBTRACTION ||
                 prefix[i].get_type() == detail::Types::MULTIPLICATION ||
-                prefix[i].get_type() == detail::Types::DIVISION)
+                prefix[i].get_type() == detail::Types::DIVISION ||
+                prefix[i].get_type() == detail::Types::UNARY_PLUS ||
+                prefix[i].get_type() == detail::Types::UNARY_MINUS)
             {
                 if (st.empty())
                     throw std::invalid_argument("invalid argument!");
@@ -156,9 +158,9 @@ namespace calc
 
                 if (st.empty())
                 {
-                    if (prefix[i].get_type() == detail::Types::ADDITION)
+                    if (prefix[i].get_type() == detail::Types::UNARY_PLUS)
                         st.push(first_operand);
-                    else if (prefix[i].get_type() == detail::Types::SUBTRACTION)
+                    else if (prefix[i].get_type() == detail::Types::UNARY_MINUS)
                         st.push(-first_operand);
                     else
                         throw std::invalid_argument("invalid argument!");
@@ -168,7 +170,17 @@ namespace calc
                     double second_operand = st.top();
                     st.pop();
 
-                    if (prefix[i].get_type() == detail::Types::ADDITION)
+                    if (prefix[i].get_type() == detail::Types::UNARY_PLUS)
+                    {
+                        st.push(second_operand);
+                        st.push(first_operand);
+                    }
+                    else if (prefix[i].get_type() == detail::Types::UNARY_MINUS)
+                    {
+                        st.push(second_operand);
+                        st.push(-first_operand);
+                    }
+                    else if (prefix[i].get_type() == detail::Types::ADDITION)
                         st.push(first_operand + second_operand);
                     else if (prefix[i].get_type() == detail::Types::SUBTRACTION)
                         st.push(first_operand - second_operand);

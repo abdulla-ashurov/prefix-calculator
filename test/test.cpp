@@ -130,11 +130,11 @@ TEST_CASE("test function calc::calculate_impl")
             {calc::Token("/"), calc::Token("1"), calc::Token("/"), calc::Token("2"), calc::Token("3")},
             {calc::Token("+"), calc::Token("1"), calc::Token("12")},
             {calc::Token("-"), calc::Token("12"), calc::Token("123")},
-            {calc::Token("-"), calc::Token("*"), calc::Token("123"), calc::Token("1234")},
-            {calc::Token("+"), calc::Token("-"), calc::Token("/"), calc::Token("12340"), calc::Token("1234")},
-            {calc::Token("-"), calc::Token("1")},
-            {calc::Token("-"), calc::Token("23")},
-            {calc::Token("-"), calc::Token("345")},
+            {calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("*"), calc::Token("123"), calc::Token("1234")},
+            {calc::Token("+", detail::Types::UNARY_PLUS), calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("/"), calc::Token("12340"), calc::Token("1234")},
+            {calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("1")},
+            {calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("23")},
+            {calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("345")},
             {calc::Token("1234567890")}
         };
 
@@ -146,26 +146,5 @@ TEST_CASE("test function calc::calculate_impl")
             double result = calc::calculate_impl(prefix[i]);
             REQUIRE(result == expected_results[i]);
         }
-    }
-
-    SECTION("function should return std::invalid_argument")
-    {
-        std::deque<calc::tokens> prefix =
-        {
-            {calc::Token("+")},
-            {calc::Token("-")},
-            {calc::Token("*")},
-            {calc::Token("/")},
-            {calc::Token("*9012")},
-            {calc::Token("-+/9012/*")},
-            {calc::Token("abcdefghij")},
-            {calc::Token("a"), calc::Token("b"), calc::Token("c"), calc::Token("d"),
-                calc::Token("e"), calc::Token("f"), calc::Token("g"), calc::Token("h"),
-                calc::Token("i"), calc::Token("j")},
-            {calc::Token("*"), calc::Token("-"), calc::Token("9"), calc::Token("012")}
-        };
-
-        for (size_t i = 0; i < prefix.size(); i++)
-            REQUIRE_THROWS(calc::calculate_impl(prefix[i]));
     }
 }

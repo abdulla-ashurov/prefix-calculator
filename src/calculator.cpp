@@ -147,12 +147,7 @@ namespace calc
             if (prefix[i].get_type() == detail::Types::OPERAND)
                 st.push(std::stoi(prefix[i].get_value()));
             
-            else if (prefix[i].get_type() == detail::Types::ADDITION ||
-                prefix[i].get_type() == detail::Types::SUBTRACTION ||
-                prefix[i].get_type() == detail::Types::MULTIPLICATION ||
-                prefix[i].get_type() == detail::Types::DIVISION ||
-                prefix[i].get_type() == detail::Types::UNARY_PLUS ||
-                prefix[i].get_type() == detail::Types::UNARY_MINUS)
+            else if (detail::is_operator(prefix[i].get_type()))
             {
                 if (st.empty())
                     throw std::invalid_argument("invalid argument!");
@@ -161,42 +156,13 @@ namespace calc
                 st.pop();
 
                 if (st.empty())
-                {
-                    if (prefix[i].get_type() == detail::Types::UNARY_PLUS)
-                        st.push(first_operand);
-                    else if (prefix[i].get_type() == detail::Types::UNARY_MINUS)
-                        st.push(-first_operand);
-                    else
-                        throw std::invalid_argument("invalid argument!");
-                }
+                    calculate_one_operand(first_operand, prefix[i].get_type(), st);
                 else
                 {
                     double second_operand = st.top();
                     st.pop();
 
-                    if (prefix[i].get_type() == detail::Types::UNARY_PLUS)
-                    {
-                        st.push(second_operand);
-                        st.push(first_operand);
-                    }
-                    else if (prefix[i].get_type() == detail::Types::UNARY_MINUS)
-                    {
-                        st.push(second_operand);
-                        st.push(-first_operand);
-                    }
-                    else if (prefix[i].get_type() == detail::Types::ADDITION)
-                        st.push(first_operand + second_operand);
-                    else if (prefix[i].get_type() == detail::Types::SUBTRACTION)
-                        st.push(first_operand - second_operand);
-                    else if (prefix[i].get_type() == detail::Types::MULTIPLICATION)
-                        st.push(first_operand * second_operand);
-                    else if (prefix[i].get_type() == detail::Types::DIVISION)
-                    {
-                        if (second_operand == 0.0)
-                            throw std::invalid_argument("we cannot division to zero");
-                    
-                        st.push(first_operand / second_operand);
-                    }
+                    calculate_two_operands(first_operand, second_operand, prefix[i].get_type(), st);
                 }
                 
             }
@@ -205,6 +171,62 @@ namespace calc
         }
 
         return st.top();
+    }
+
+    void calculate_one_operand(const double operand, const detail::Types unary_operator, std::stack<double> &st)
+    { 
+        switch(unary_operator)
+        {
+            case detail::Types::UNARY_PLUS:
+                st.push(operand);
+                break;
+            
+            case detail::Types::UNARY_MINUS:
+                st.push(-operand);
+                break;
+            
+            default:
+                throw std::invalid_argument("invalid argument!");
+                break;
+        }
+    }
+
+    void calculate_two_operands(const double first_operand, const double second_operand, const detail::Types type_operator, std::stack<double> &st)
+    {
+        switch(type_operator)
+        {
+            case detail::Types::UNARY_PLUS:
+                st.push(second_operand);
+                st.push(first_operand);
+                break;
+            
+            case detail::Types::UNARY_MINUS:
+                st.push(second_operand);
+                st.push(-first_operand);
+                break;
+
+            case detail::Types::ADDITION:
+                st.push(first_operand + second_operand);
+                break;
+            
+            case detail::Types::SUBTRACTION:
+                st.push(first_operand - second_operand);
+                break;
+
+            case detail::Types::MULTIPLICATION:
+                st.push(first_operand * second_operand);
+                break;
+
+            case detail::Types::DIVISION:
+                if (second_operand == 0.0)
+                    throw std::invalid_argument("we cannot division to zero");
+                st.push(first_operand / second_operand);
+                break;
+            
+            default:
+                throw std::invalid_argument("invalid argument!");
+                break;
+        }
     }
 
     Token::Token(const std::string &value, detail::Types type)

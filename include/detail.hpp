@@ -22,6 +22,7 @@ namespace detail
     bool is_number(const char s);
 
     bool is_operand(const std::string &value);
+    bool is_operator(const Types type);
     bool is_plus(const std::string &value);
     bool is_minus(const std::string &value);
     bool is_multiplication(const std::string &value);

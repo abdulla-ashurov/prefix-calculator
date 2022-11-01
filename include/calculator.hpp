@@ -14,18 +14,17 @@ namespace calc
     {
         std::string value;
         detail::Types type;
-        detail::PossibleLeftValues possible_left_value;
 
         detail::Types define_type(const std::string &value);
-        detail::PossibleLeftValues define_possible_left_value(const detail::Types type);
 
     public:
+        Token(const std::string &value, detail::Types type);
+        Token(const char value, detail::Types type);
         Token(const std::string &value);
         Token(const char value);
 
         const std::string& get_value() const;
         detail::Types get_type() const;
-        detail::PossibleLeftValues get_possible_left_value() const;
     };
 
     typedef std::deque<Token> tokens;

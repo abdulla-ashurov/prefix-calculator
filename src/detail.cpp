@@ -16,12 +16,12 @@ namespace detail
         return true;
     }
 
-    bool is_addition(const std::string &value)
+    bool is_plus(const std::string &value)
     {
         return value == "+";
     }
 
-    bool is_subtraction(const std::string &value)
+    bool is_minus(const std::string &value)
     {
         return value == "-";
     }

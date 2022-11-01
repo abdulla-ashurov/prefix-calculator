@@ -23,15 +23,15 @@ TEST_CASE("test function calc::parse(const std::string &expr)")
             {calc::Token("345")},
             {calc::Token("678")},
             {calc::Token("9012")},
-            {calc::Token("-"), calc::Token("/"), calc::Token("1"), calc::Token("+"), calc::Token("*")},
+            {calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("/"), calc::Token("1"), calc::Token("+"), calc::Token("*")},
             {calc::Token("1"), calc::Token("+"), calc::Token("12")},
             {calc::Token("12"), calc::Token("-"), calc::Token("123")},
-            {calc::Token("-"), calc::Token("123"), calc::Token("*"), calc::Token("1234")},
-            {calc::Token("+"), calc::Token("1234"), calc::Token("/"), calc::Token("-"), calc::Token("12345")},
-            {calc::Token("("), calc::Token("-"), calc::Token("1"), calc::Token(")")},
-            {calc::Token("("), calc::Token("-"), calc::Token("23"), calc::Token(")")},
-            {calc::Token("("), calc::Token("-"), calc::Token("345"), calc::Token(")")},
-            {calc::Token("("), calc::Token("-"), calc::Token("9"), calc::Token(")"),
+            {calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("123"), calc::Token("*"), calc::Token("1234")},
+            {calc::Token("+", detail::Types::UNARY_PLUS), calc::Token("1234"), calc::Token("/"), calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("12345")},
+            {calc::Token("("), calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("1"), calc::Token(")")},
+            {calc::Token("("), calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("23"), calc::Token(")")},
+            {calc::Token("("), calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("345"), calc::Token(")")},
+            {calc::Token("("), calc::Token("-", detail::Types::UNARY_MINUS), calc::Token("9"), calc::Token(")"),
                 calc::Token("("), calc::Token("012"), calc::Token(")")},
             {calc::Token("a"), calc::Token("b"), calc::Token("c"), calc::Token("d"),
                 calc::Token("e"), calc::Token("f"), calc::Token("g"), calc::Token("h"),
@@ -45,10 +45,9 @@ TEST_CASE("test function calc::parse(const std::string &expr)")
 
             REQUIRE(received_tokens.size() == expected_tokens[i].size());
             for (size_t j = 0; j < received_tokens.size(); j++)
-            {
+            {   
                 REQUIRE(received_tokens[j].get_value() == expected_tokens[i][j].get_value());
                 REQUIRE(received_tokens[j].get_type() == expected_tokens[i][j].get_type());
-                REQUIRE(received_tokens[j].get_possible_left_value() == expected_tokens[i][j].get_possible_left_value());
             }
         }
     }
@@ -110,7 +109,6 @@ TEST_CASE("test function calc::to_prefix(const tokens &infix)")
             {
                 REQUIRE(received_prefix[j].get_value() == expected_prefix[i][j].get_value());
                 REQUIRE(received_prefix[j].get_type() == expected_prefix[i][j].get_type());
-                REQUIRE(received_prefix[j].get_possible_left_value() == expected_prefix[i][j].get_possible_left_value());
             }
         }
     }

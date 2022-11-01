@@ -3,6 +3,7 @@
 
 #include <string>
 #include <deque>
+#include <stack>
 
 #include "../include/detail.hpp"
 
@@ -34,6 +35,7 @@ namespace calc
     double calculate_impl(const tokens &prefix);
 
     tokens to_prefix_impl(const tokens &infix);
+    void put(const char symbol, tokens &infix, std::stack<std::string> &st);
 }
 
 #endif

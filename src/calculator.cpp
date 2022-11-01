@@ -1,4 +1,3 @@
-#include <stack>
 #include <algorithm>
 
 #include "../include/calculator.hpp"
@@ -48,7 +47,7 @@ namespace calc
         return infix;
     }
 
-    void put(const char symbol, tokens infix, std::stack<std::string> st)
+    void put(const char symbol, tokens &infix, std::stack<std::string> &st)
     {
         if (detail::is_plus(std::string(1, symbol)))
         {
@@ -67,7 +66,7 @@ namespace calc
         else
             infix.push_back(Token(symbol));
 
-        while (!st.empty())
+        if (!st.empty())
             st.pop();
     }
 

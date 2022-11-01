@@ -35,25 +35,7 @@ namespace calc
                     st.push(operand);
                 }
                 
-                if (detail::is_plus(std::string(1, expr[i])))
-                {
-                    if (!st.empty())
-                        infix.push_back(Token(expr[i], detail::Types::ADDITION));
-                    else
-                        infix.push_back(Token(expr[i], detail::Types::UNARY_PLUS));
-                }
-                else if (detail::is_minus(std::string(1, expr[i])))
-                {
-                    if (!st.empty())
-                        infix.push_back(Token(expr[i], detail::Types::SUBTRACTION));
-                    else
-                        infix.push_back(Token(expr[i], detail::Types::UNARY_MINUS));
-                }
-                else
-                    infix.push_back(Token(expr[i]));
-
-                while (!st.empty())
-                    st.pop();
+                put(expr[i], infix, st);
             }
         }
 
@@ -64,6 +46,29 @@ namespace calc
         }
 
         return infix;
+    }
+
+    void put(const char symbol, tokens infix, std::stack<std::string> st)
+    {
+        if (detail::is_plus(std::string(1, symbol)))
+        {
+            if (!st.empty())
+                infix.push_back(Token(symbol, detail::Types::ADDITION));
+            else
+                infix.push_back(Token(symbol, detail::Types::UNARY_PLUS));
+        }
+        else if (detail::is_minus(std::string(1, symbol)))
+        {
+            if (!st.empty())
+                infix.push_back(Token(symbol, detail::Types::SUBTRACTION));
+            else
+                infix.push_back(Token(symbol, detail::Types::UNARY_MINUS));
+        }
+        else
+            infix.push_back(Token(symbol));
+
+        while (!st.empty())
+            st.pop();
     }
 
     tokens to_prefix(const tokens &infix)

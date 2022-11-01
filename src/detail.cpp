@@ -16,12 +16,22 @@ namespace detail
         return true;
     }
 
-    bool is_addition(const std::string &value)
+    bool is_operator(const Types type)
+    {
+        return  type == detail::Types::ADDITION ||
+                type == detail::Types::SUBTRACTION ||
+                type == detail::Types::MULTIPLICATION ||
+                type == detail::Types::DIVISION ||
+                type == detail::Types::UNARY_PLUS ||
+                type == detail::Types::UNARY_MINUS;
+    }
+
+    bool is_plus(const std::string &value)
     {
         return value == "+";
     }
 
-    bool is_subtraction(const std::string &value)
+    bool is_minus(const std::string &value)
     {
         return value == "-";
     }

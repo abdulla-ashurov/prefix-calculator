@@ -1,4 +1,3 @@
-#include <stack>
 #include <algorithm>
 
 #include "../include/calculator.hpp"
@@ -18,6 +17,7 @@ namespace calc
     {
         std::string operand;
         tokens infix;
+        std::stack<std::string> st;
 
         for (size_t i = 0; i < expr.length(); i++)
         {
@@ -30,8 +30,11 @@ namespace calc
                 {
                     infix.push_back(Token(operand));
                     operand.clear();
+
+                    st.push(operand);
                 }
-                infix.push_back(Token(expr[i]));
+                
+                put(expr[i], infix, st);
             }
         }
 
@@ -42,6 +45,29 @@ namespace calc
         }
 
         return infix;
+    }
+
+    void put(const char symbol, tokens &infix, std::stack<std::string> &st)
+    {
+        if (detail::is_plus(std::string(1, symbol)))
+        {
+            if (!st.empty())
+                infix.push_back(Token(symbol, detail::Types::ADDITION));
+            else
+                infix.push_back(Token(symbol, detail::Types::UNARY_PLUS));
+        }
+        else if (detail::is_minus(std::string(1, symbol)))
+        {
+            if (!st.empty())
+                infix.push_back(Token(symbol, detail::Types::SUBTRACTION));
+            else
+                infix.push_back(Token(symbol, detail::Types::UNARY_MINUS));
+        }
+        else
+            infix.push_back(Token(symbol));
+
+        if (!st.empty())
+            st.pop();
     }
 
     tokens to_prefix(const tokens &infix)
@@ -80,6 +106,8 @@ namespace calc
 
                 break;
             
+            case detail::Types::UNARY_PLUS:
+            case detail::Types::UNARY_MINUS:
             case detail::Types::ADDITION:
             case detail::Types::SUBTRACTION:
             case detail::Types::MULTIPLICATION:
@@ -110,11 +138,107 @@ namespace calc
         return prefix;
     }
 
+    double calculate_impl(const tokens &prefix)
+    {
+        std::stack<double> st;
+
+        for (int i = prefix.size() - 1; i >= 0; i--)
+        {
+            if (prefix[i].get_type() == detail::Types::OPERAND)
+                st.push(std::stoi(prefix[i].get_value()));
+            
+            else if (detail::is_operator(prefix[i].get_type()))
+            {
+                if (st.empty())
+                    throw std::invalid_argument("invalid argument!");
+                
+                double first_operand = st.top();
+                st.pop();
+
+                if (st.empty())
+                    calculate_one_operand(first_operand, prefix[i].get_type(), st);
+                else
+                {
+                    double second_operand = st.top();
+                    st.pop();
+
+                    calculate_two_operands(first_operand, second_operand, prefix[i].get_type(), st);
+                }
+                
+            }
+            else
+                throw std::invalid_argument("invalid argument!");
+        }
+
+        return st.top();
+    }
+
+    void calculate_one_operand(const double operand, const detail::Types unary_operator, std::stack<double> &st)
+    { 
+        switch(unary_operator)
+        {
+            case detail::Types::UNARY_PLUS:
+                st.push(operand);
+                break;
+            
+            case detail::Types::UNARY_MINUS:
+                st.push(-operand);
+                break;
+            
+            default:
+                throw std::invalid_argument("invalid argument!");
+                break;
+        }
+    }
+
+    void calculate_two_operands(const double first_operand, const double second_operand, const detail::Types type_operator, std::stack<double> &st)
+    {
+        switch(type_operator)
+        {
+            case detail::Types::UNARY_PLUS:
+                st.push(second_operand);
+                st.push(first_operand);
+                break;
+            
+            case detail::Types::UNARY_MINUS:
+                st.push(second_operand);
+                st.push(-first_operand);
+                break;
+
+            case detail::Types::ADDITION:
+                st.push(first_operand + second_operand);
+                break;
+            
+            case detail::Types::SUBTRACTION:
+                st.push(first_operand - second_operand);
+                break;
+
+            case detail::Types::MULTIPLICATION:
+                st.push(first_operand * second_operand);
+                break;
+
+            case detail::Types::DIVISION:
+                if (second_operand == 0.0)
+                    throw std::invalid_argument("we cannot division to zero");
+                st.push(first_operand / second_operand);
+                break;
+            
+            default:
+                throw std::invalid_argument("invalid argument!");
+                break;
+        }
+    }
+
+    Token::Token(const std::string &value, detail::Types type)
+        : value{value}, type{type} {}
+
+    Token::Token(const char value, detail::Types type)
+        : Token{std::string(1, value), type} {}
+
     Token::Token(const std::string &value)
         : value{value}
     {
         type = define_type(value);
-        possible_left_value = define_possible_left_value(type);
     }
 
     Token::Token(const char value)
@@ -130,21 +254,15 @@ namespace calc
         return type;
     }
 
-    detail::PossibleLeftValues Token::get_possible_left_value() const
-    {
-        return possible_left_value;
-    }
-    
-
     detail::Types Token::define_type(const std::string &value)
     {
         detail::Types defined_type;
 
         if (detail::is_operand(value))
             defined_type = detail::Types::OPERAND;
-        else if (detail::is_addition(value))
+        else if (detail::is_plus(value))
             defined_type = detail::Types::ADDITION;
-        else if (detail::is_subtraction(value))
+        else if (detail::is_minus(value))
             defined_type = detail::Types::SUBTRACTION;
         else if (detail::is_multiplication(value))
             defined_type = detail::Types::MULTIPLICATION;
@@ -158,47 +276,5 @@ namespace calc
             defined_type = detail::Types::INCORRECT;
 
         return defined_type;
-    }
-
-    detail::PossibleLeftValues Token::define_possible_left_value(const detail::Types type)
-    {
-        detail::PossibleLeftValues possible_left_value;
-
-        switch (type)
-        {
-        case detail::Types::OPERAND:
-            possible_left_value = detail::PossibleLeftValues::OPERAND;
-            break;
-
-        case detail::Types::ADDITION:
-            possible_left_value = detail::PossibleLeftValues::ADDITION;
-            break;
-
-        case detail::Types::SUBTRACTION:
-            possible_left_value = detail::PossibleLeftValues::SUBTRACTION;
-            break;
-
-        case detail::Types::MULTIPLICATION:
-            possible_left_value = detail::PossibleLeftValues::MULTIPLICATION;
-            break;
-
-        case detail::Types::DIVISION:
-            possible_left_value = detail::PossibleLeftValues::DIVISION;
-            break;
-
-        case detail::Types::OPEN_BRACKET:
-            possible_left_value = detail::PossibleLeftValues::OPEN_BRACKET;
-            break;
-
-        case detail::Types::CLOSE_BRACKET:
-            possible_left_value = detail::PossibleLeftValues::CLOSE_BRACKET;
-            break;
-
-        case detail::Types::INCORRECT:
-            possible_left_value = detail::PossibleLeftValues::INCORRECT;
-            break;
-        }
-
-        return possible_left_value;
     }
 }

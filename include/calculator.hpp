@@ -3,6 +3,7 @@
 
 #include <string>
 #include <deque>
+#include <stack>
 
 #include "../include/detail.hpp"
 
@@ -14,18 +15,17 @@ namespace calc
     {
         std::string value;
         detail::Types type;
-        detail::PossibleLeftValues possible_left_value;
 
         detail::Types define_type(const std::string &value);
-        detail::PossibleLeftValues define_possible_left_value(const detail::Types type);
 
     public:
+        Token(const std::string &value, detail::Types type);
+        Token(const char value, detail::Types type);
         Token(const std::string &value);
         Token(const char value);
 
         const std::string& get_value() const;
         detail::Types get_type() const;
-        detail::PossibleLeftValues get_possible_left_value() const;
     };
 
     typedef std::deque<Token> tokens;
@@ -35,6 +35,10 @@ namespace calc
     double calculate_impl(const tokens &prefix);
 
     tokens to_prefix_impl(const tokens &infix);
+    
+    void put(const char symbol, tokens &infix, std::stack<std::string> &st);
+    void calculate_one_operand(const double operand, const detail::Types unary_operator, std::stack<double> &st);
+    void calculate_two_operands(const double first_operand, const double second_operand, const detail::Types type_operator, std::stack<double> &st);
 }
 
 #endif

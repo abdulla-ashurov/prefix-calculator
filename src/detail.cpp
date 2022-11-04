@@ -26,6 +26,24 @@ namespace detail
                 type == detail::Types::UNARY_MINUS;
     }
 
+    bool is_valid_sequence_of_brackets(const calc::tokens &infix)
+    {
+        size_t open_brackets_count = 0, close_brackets_count = 0;
+        
+        for (size_t i = 0; i < infix.size(); i++)
+        {
+            if (infix[i].get_value() == "(")
+                open_brackets_count++;
+            else if (infix[i].get_value() == ")")
+                close_brackets_count++;
+
+            if (open_brackets_count < close_brackets_count)
+                return false;
+        }
+
+        return true;
+    }
+
     bool is_plus(const std::string &value)
     {
         return value == "+";

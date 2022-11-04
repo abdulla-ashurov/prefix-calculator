@@ -6,29 +6,13 @@
 #include <stack>
 
 #include "../include/detail.hpp"
+#include "../include/token.hpp"
 
 namespace calc
 {
     double calculate(const std::string &expr);
 
-    class Token
-    {
-        std::string value;
-        detail::Types type;
-
-        detail::Types define_type(const std::string &value);
-
-    public:
-        Token(const std::string &value, detail::Types type);
-        Token(const char value, detail::Types type);
-        Token(const std::string &value);
-        Token(const char value);
-
-        const std::string& get_value() const;
-        detail::Types get_type() const;
-    };
-
-    typedef std::deque<Token> tokens;
+    typedef std::deque<token::Token> tokens;
 
     tokens parse(const std::string &expr);
     tokens to_prefix(const tokens &infix);

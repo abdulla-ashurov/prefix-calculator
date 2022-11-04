@@ -28,7 +28,7 @@ namespace calc
             {
                 if (!operand.empty())
                 {
-                    infix.push_back(Token(operand));
+                    infix.push_back(token::Token(operand));
                     operand.clear();
 
                     st.push(operand);
@@ -40,7 +40,7 @@ namespace calc
 
         if (!operand.empty())
         {
-            infix.push_back(Token(operand));
+            infix.push_back(token::Token(operand));
             operand.clear();
         }
 
@@ -52,19 +52,19 @@ namespace calc
         if (detail::is_plus(std::string(1, symbol)))
         {
             if (!st.empty())
-                infix.push_back(Token(symbol, detail::Types::ADDITION));
+                infix.push_back(token::Token(symbol, detail::Types::ADDITION));
             else
-                infix.push_back(Token(symbol, detail::Types::UNARY_PLUS));
+                infix.push_back(token::Token(symbol, detail::Types::UNARY_PLUS));
         }
         else if (detail::is_minus(std::string(1, symbol)))
         {
             if (!st.empty())
-                infix.push_back(Token(symbol, detail::Types::SUBTRACTION));
+                infix.push_back(token::Token(symbol, detail::Types::SUBTRACTION));
             else
-                infix.push_back(Token(symbol, detail::Types::UNARY_MINUS));
+                infix.push_back(token::Token(symbol, detail::Types::UNARY_MINUS));
         }
         else
-            infix.push_back(Token(symbol));
+            infix.push_back(token::Token(symbol));
 
         if (!st.empty())
             st.pop();
@@ -79,8 +79,11 @@ namespace calc
 
     tokens to_prefix_impl(const tokens &infix)
     {
+        if (!detail::is_valid_sequence_of_brackets(infix))
+            throw std::invalid_argument("Invalid sequence of brackets");
+
         tokens prefix;
-        std::stack<Token> st;
+        std::stack<token::Token> st;
 
         for (int i = infix.size() - 1; i >= 0; i--)
         {
@@ -227,54 +230,5 @@ namespace calc
                 throw std::invalid_argument("invalid argument!");
                 break;
         }
-    }
-
-    Token::Token(const std::string &value, detail::Types type)
-        : value{value}, type{type} {}
-
-    Token::Token(const char value, detail::Types type)
-        : Token{std::string(1, value), type} {}
-
-    Token::Token(const std::string &value)
-        : value{value}
-    {
-        type = define_type(value);
-    }
-
-    Token::Token(const char value)
-        : Token(std::string(1, value)) {}
-    
-    const std::string& Token::get_value() const
-    {
-        return value;
-    }
-
-    detail::Types Token::get_type() const
-    {
-        return type;
-    }
-
-    detail::Types Token::define_type(const std::string &value)
-    {
-        detail::Types defined_type;
-
-        if (detail::is_operand(value))
-            defined_type = detail::Types::OPERAND;
-        else if (detail::is_plus(value))
-            defined_type = detail::Types::ADDITION;
-        else if (detail::is_minus(value))
-            defined_type = detail::Types::SUBTRACTION;
-        else if (detail::is_multiplication(value))
-            defined_type = detail::Types::MULTIPLICATION;
-        else if (detail::is_division(value))
-            defined_type = detail::Types::DIVISION;
-        else if (detail::is_open_bracket(value))
-            defined_type = detail::Types::OPEN_BRACKET;
-        else if (detail::is_close_bracket(value))
-            defined_type = detail::Types::CLOSE_BRACKET;
-        else
-            defined_type = detail::Types::INCORRECT;
-
-        return defined_type;
     }
 }

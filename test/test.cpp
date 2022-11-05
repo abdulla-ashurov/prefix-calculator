@@ -206,11 +206,14 @@ TEST_CASE("test function calc::calculate")
         }
     }
 
-    // SECTION("function should return expected_results")
+    SECTION("function should return expected_results")
     {
         std::deque<std::string> expressions = {
             "a", "ab", "abc", "abcdefghij",
-            "-*1", "-*12", "--/123", "-/--1234"
+            "-*1", "-*12", "--/123", "-/--1234",
+            "1(2+3)", "(2+3)33+23(33+22)", "123)*(1)",
+            "a*b/c", "ab*c", "abc*", "abcdefghij",
+            // "223+)22(", "!22-4", "23*4-", "67-76+38-/22" 
         };
 
         for (size_t i = 0; i < expressions.size(); i++)

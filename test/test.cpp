@@ -207,13 +207,13 @@ TEST_CASE("test function calc::calculate")
     }
 
     // SECTION("function should return expected_results")
-    // {
-    //     std::deque<std::string> expressions = {
-    //         "a", "ab", "abc", "abcdefghij",
-    //         "-*1", "-*12", "--/123", "-/--1234"
-    //     };
+    {
+        std::deque<std::string> expressions = {
+            "a", "ab", "abc", "abcdefghij",
+            "-*1", "-*12", "--/123", "-/--1234"
+        };
 
-    //     for (size_t i = 0; i < expressions.size(); i++)
-    //         REQUIRE_THROWS(calc::calculate(expressions[i]));
-    // }
+        for (size_t i = 0; i < expressions.size(); i++)
+            REQUIRE_THROWS(calc::calculate(expressions[i]));
+    }
 }

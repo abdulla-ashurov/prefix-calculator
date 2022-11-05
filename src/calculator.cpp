@@ -81,8 +81,13 @@ namespace calc
         tokens prefix;
         std::stack<token::Token> st;
 
+        size_t open_bracket_count = 0, close_bracket_count = 0;
+
         for (int i = infix.size() - 1; i >= 0; i--)
         {
+            if (open_bracket_count > close_bracket_count)
+                throw std::invalid_argument("invalid argument!");
+
             detail::Types type = infix[i].get_type();
 
             switch (type)
@@ -93,6 +98,7 @@ namespace calc
             
             case detail::Types::CLOSE_BRACKET:
                 st.push(infix[i]);
+                close_bracket_count++;
                 break;
             
             case detail::Types::OPEN_BRACKET:
@@ -102,6 +108,7 @@ namespace calc
                     st.pop();
                 }
                 st.pop();
+                open_bracket_count++;
 
                 break;
             
@@ -125,6 +132,9 @@ namespace calc
                 break;
             }
         }
+
+        if (open_bracket_count != close_bracket_count)
+            throw std::invalid_argument("invalid argument!");
 
         while (!st.empty())
         {

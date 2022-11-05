@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(TESTS)
 
 set(SOURCE_EXE test/test.cpp)
-set(SOURCE_LIB test/catch_amalgamated.cpp src/detail.cpp src/calculator.cpp)
+set(SOURCE_LIB test/catch_amalgamated.cpp src/token.cpp src/detail.cpp src/calculator.cpp)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 14)

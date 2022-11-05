@@ -19,7 +19,8 @@ namespace calc
 
     tokens to_prefix_impl(const tokens &infix);
     
-    void put(const char symbol, tokens &infix, std::stack<std::string> &st);
+    void put_operand(std::string &operand, tokens &t);
+    void put(const char symbol, tokens &t, std::stack<std::string> &st);
     void calculate_one_operand(const double operand, const detail::Types unary_operator, std::stack<double> &st);
     void calculate_two_operands(const double first_operand, const double second_operand, const detail::Types type_operator, std::stack<double> &st);
 }

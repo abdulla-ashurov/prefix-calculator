@@ -5,8 +5,7 @@
 #include <deque>
 #include <stack>
 
-#include "../include/detail.hpp"
-#include "../include/token.hpp"
+#include "token.hpp"
 
 namespace calc
 {

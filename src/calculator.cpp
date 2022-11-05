@@ -1,7 +1,6 @@
 #include <algorithm>
 
 #include "../include/calculator.hpp"
-#include "../include/detail.hpp"
 
 namespace calc
 {
@@ -79,9 +78,6 @@ namespace calc
 
     tokens to_prefix_impl(const tokens &infix)
     {
-        if (!detail::is_valid_sequence_of_brackets(infix))
-            throw std::invalid_argument("Invalid sequence of brackets");
-
         tokens prefix;
         std::stack<token::Token> st;
 

@@ -2,7 +2,7 @@
 #define TOKEN_HPP
 
 #include <string>
-#include "../include/detail.hpp"
+#include "detail.hpp"
 
 namespace token
 {
